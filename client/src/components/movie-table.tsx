@@ -20,9 +20,10 @@ export interface Movie {
 export interface MovieTableProps {
     movies: Movie[];
     total: number;
+    searchingMovies:boolean;
 }
 export const MovieTable: FC<MovieTableProps> = (props): ReactElement => {
-    const { movies,total } = props;
+    const { movies,total,searchingMovies } = props;
     const {currentPage,take,setCurrentPage}=usePaginationStore();
     const [movieList, setMovieList] = useState(movies);
 
@@ -103,12 +104,14 @@ export const MovieTable: FC<MovieTableProps> = (props): ReactElement => {
                         )}
                     </tbody>
                 </table>
-                {movieList.length > 0 && (
-                    <Pagination
-                        totalPages={Math.ceil(total/take)}
-                        currentPage={currentPage}
-                        onPageChange={handlePageChange}
-                    />
+                {(!searchingMovies) &&(
+                    movieList.length > 0 && (
+                        <Pagination
+                            totalPages={Math.ceil(total/take)}
+                            currentPage={currentPage}
+                            onPageChange={handlePageChange}
+                        />
+                    )
                 )}
             </div>
         </motion.div>

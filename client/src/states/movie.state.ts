@@ -27,6 +27,7 @@ export interface MovieStoreState {
     setisLoading: (isLoading: boolean) => void;
     error: boolean;
     fetchMovies: (skip:number,take:number) => Promise<void>;
+    searchMovies: (searchTerm: string) => Promise<void>;
 }
 
 const useMovieStore = create<MovieStoreState>((set) => ({
@@ -49,6 +50,28 @@ const useMovieStore = create<MovieStoreState>((set) => ({
             if (response.status === 200) {
                 set({ movies: response.data.data});
             }
+        } catch (err) {
+            const { response } = err as AxiosError<IErrorResponse>;
+            set({ isLoading: false, error: true });
+            throw Error(response?.data.errorMessage);
+        }
+    },
+
+    searchMovies: async (searchTerm: string) => {
+        set({ isLoading: true, error: false });
+        try {
+            const response = await axios.get(
+                "http://localhost:3000/api/movies/search",
+                {
+                    params: {
+                        searchTerm: searchTerm,
+                    },
+                }
+            );
+            if (response.status === 200) {
+                set({ movies: response.data.data });
+            }
+            console.log(response.data.data);
         } catch (err) {
             const { response } = err as AxiosError<IErrorResponse>;
             set({ isLoading: false, error: true });

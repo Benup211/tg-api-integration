@@ -3,9 +3,12 @@ import { ResponseService } from "../views";
 import { MovieRepository } from "../repository/movie.repository";
 export class MovieController {
     static async GetAllMovies(req: Request, res: Response, next: NextFunction) {
-        const { skip, take } = req.query;
+        let { skip = 0, take = 5 } = req.query;
         try {
-            let movies = await MovieRepository.GetAllMovies(Number(skip), Number(take));
+            let movies = await MovieRepository.GetAllMovies(
+                Number(skip),
+                Number(take)
+            );
             ResponseService.CreateSuccessResponse(
                 200,
                 "Movies fetched successfully",
@@ -13,12 +16,7 @@ export class MovieController {
                 res
             );
         } catch (error) {
-            next(
-                ResponseService.CreateErrorResponse(
-                    "Movies Fetching Error(Server Error)",
-                    400
-                )
-            );
+            next(error);
         }
     }
     static async GetTotalMovies(
@@ -35,12 +33,24 @@ export class MovieController {
                 res
             );
         } catch (error) {
-            next(
-                ResponseService.CreateErrorResponse(
-                    "Total Movies Fetching Error(Server Error)",
-                    400
-                )
+            next(error);
+        }
+    }
+
+    static async searchMovies(req: Request, res: Response, next: NextFunction) {
+        let { searchTerm='' } = req.query;
+        try {
+            let movies = await MovieRepository.searchMovies(
+                searchTerm as string
             );
+            ResponseService.CreateSuccessResponse(
+                200,
+                "Movies fetched successfully",
+                movies ,
+                res
+            );
+        } catch (error) {
+            next(error);
         }
     }
 }

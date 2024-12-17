@@ -10,6 +10,7 @@ class MovieRoute {
     getRoutes() {
         this.router.get("/getAll", MovieController.GetAllMovies);
         this.router.get("/getTotalMovies", MovieController.GetTotalMovies);
+        this.router.get("/search", MovieController.searchMovies);
     }
     postRoutes() {
     }
